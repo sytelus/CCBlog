@@ -15,7 +15,7 @@ namespace CCBlog.Controllers
             return View();
         }
 
-        [HttpGet]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic"), HttpGet]
         public ViewResult Throw()
         {
             throw new NotImplementedException("Example exception for testing error handling.");
