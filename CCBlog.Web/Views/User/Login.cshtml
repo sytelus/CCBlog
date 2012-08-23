@@ -1,0 +1,73 @@
+﻿@model CCBlog.Controllers.UserController.LoginModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+@section HeadContent {
+    <link rel="stylesheet" type="text/css" media="screen" href="@Url.Content("~/js/jQueryOpenIdPlugin/openid.css")" />
+}
+
+<article>
+
+    <h1>Sign In</h1>
+
+    <div class="message">
+        @Model.ErrorMessage
+    </div>
+
+     @using (Html.BeginForm("AuthenticateOpenId", "User", new { ReturnUrl = Model.ReturnUrl }, FormMethod.Post, new { @class = "openid" }))
+     {
+        
+         @Html.AntiForgeryToken()
+
+        
+        <div><ul class="providers"> 
+        <li class="openid" title="OpenID"><img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/openidW.png")" alt="icon" /> 
+        <span><strong>http://{your-openid-url}</strong></span></li> 
+        <li class="direct" title="Google"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/googleW.png")" alt="icon" /><span>https://www.google.com/accounts/o8/id</span></li> 
+        <li class="direct" title="Yahoo"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/yahooW.png")" alt="icon" /><span>http://yahoo.com/</span></li> 
+        <li class="username" title="AOL screen name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/aolW.png")" alt="icon" /><span>http://openid.aol.com/<strong>username</strong></span></li> 
+        <li class="username" title="MyOpenID user name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/myopenid.png")" alt="icon" /><span>http://<strong>username</strong>.myopenid.com/</span></li> 
+        <li class="username" title="Flickr user name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/flickr.png")" alt="icon" /><span>http://flickr.com/<strong>username</strong>/</span></li> 
+        <li class="username" title="Technorati user name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/technorati.png")" alt="icon" /><span>http://technorati.com/people/technorati/<strong>username</strong>/</span></li> 
+        <li class="username" title="Wordpress blog name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/wordpress.png")" alt="icon" /><span>http://<strong>username</strong>.wordpress.com</span></li> 
+        <li class="username" title="Blogger blog name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/blogger.png")" alt="icon" /><span>http://<strong>username</strong>.blogspot.com/</span></li> 
+        <li class="username" title="LiveJournal blog name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/livejournal.png")" alt="icon" /><span>http://<strong>username</strong>.livejournal.com</span></li> 
+        <li class="username" title="ClaimID user name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/claimid.png")" alt="icon" /><span>http://claimid.com/<strong>username</strong></span></li> 
+        <li class="username" title="Vidoop user name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/vidoop.png")" alt="icon" /><span>http://<strong>username</strong>.myvidoop.com/</span></li> 
+        <li class="username" title="Verisign user name"> 
+	        <img src="@Url.Content("~/js/jQueryOpenIdPlugin/images/verisign.png")" alt="icon" /><span>http://<strong>username</strong>.pip.verisignlabs.com/</span></li> 
+        </ul>
+        </div> 
+        <fieldset> 
+        <label for="openid_username">Enter your <span>Provider user name</span></label> 
+        <div><span></span><input type="text" name="openid_username" /><span></span> 
+        <input type="submit" value="Login" /></div> 
+        </fieldset> 
+        <fieldset> 
+        <label for="openid_identifier">Enter your <a class="openid_logo" href="http://openid.net">OpenID</a></label> 
+        <div><input type="text" name="openid_identifier" /> 
+        <input type="submit" value="Login" /></div> 
+        </fieldset> 
+     }
+
+</article>
+
+@section ScriptContent {
+<script type="text/javascript" src="@Url.Content("~/js/jQueryOpenIdPlugin/jquery.openid.js")"></script>
+<script>
+    $(function () { $("form.openid:eq(0)").openid(); });
+</script>
+}

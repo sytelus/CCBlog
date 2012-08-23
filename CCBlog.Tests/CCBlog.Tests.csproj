@@ -112,12 +112,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CCBlog\CCBlog.csproj">
-      <Project>{B9B75AE2-D5C2-4D76-B72B-AAA64F4F43D4}</Project>
-      <Name>CCBlog</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
