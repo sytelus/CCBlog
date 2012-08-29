@@ -130,30 +130,25 @@ namespace CCBlog.Controllers
 
         private ActionResult SetAuthCookieAndRedirect(IAuthenticationResponse authResponse, string returnUrl)
         {
-            FormsAuthentication.SetAuthCookie(authResponse.ClaimedIdentifier, true);
+            FormsAuthentication.SetAuthCookie(authResponse.ClaimedIdentifier, false);
+            //var user = Membership.GetUser(true);    //Update user's online status
 
-            var friendlyNameCookie = new HttpCookie("FriendlyName", GetFriendlyName(authResponse)) { HttpOnly = true };
-            Response.Cookies.Add(friendlyNameCookie);
+            //var sregResponse = authResponse.GetExtension<ClaimsResponse>();
+            //string fullName = sregResponse.IfNotNull(r => r.FullName);
+            //string nickName = sregResponse.IfNotNull(r => r.Nickname);
+            //string email = sregResponse.IfNotNull(r => r.Email);
+            //string friendlyName = fullName ?? nickName ?? email ?? authResponse.ClaimedIdentifier ?? authResponse.FriendlyIdentifierForDisplay ?? string.Empty;
+
+            //if (string.IsNullOrEmpty(email))
+            //{
+            //    user.Email = email;
+            //    Membership.UpdateUser(user);
+            //}
+            
+            //var friendlyNameCookie = new HttpCookie("FriendlyName", friendlyName) { HttpOnly = true };
+            //Response.Cookies.Add(friendlyNameCookie);
 
             return Redirect(returnUrl);
-        }
-
-
-        private string GetFriendlyName(IAuthenticationResponse authResponse)
-        {
-            string friendlyName = authResponse.ClaimedIdentifier ?? authResponse.FriendlyIdentifierForDisplay;
-
-            var sregResponse = authResponse.GetExtension<ClaimsResponse>();
-
-            if (sregResponse != null)
-            {
-                friendlyName =
-                    sregResponse.FullName.AsNullIfEmpty() ??
-                    sregResponse.Nickname.AsNullIfEmpty() ??
-                    sregResponse.Email;
-            }
-
-            return friendlyName;
         }
 
 
