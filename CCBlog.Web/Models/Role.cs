@@ -9,11 +9,8 @@ namespace CCBlog.Models
 {
     public class Role
     {
-        public int? RoleID { get; set; }
+        public int RoleId { get; set; }
         public string Name { get; set; }
-
-        public string Comment { get; set; }
-        public DateTimeOffset? CreateDate { get; set; }
-        public DateTimeOffset? ModifiedDate { get; set; }
+        public virtual ICollection<User> Users { get; set; }
     }
 }

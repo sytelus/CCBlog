@@ -1,10 +1,17 @@
-﻿using CCBlog.Models;
+﻿using System;
+using System.Collections.Generic;
+using CCBlog.Models;
 
 namespace CCBlog.Repository
 {
-    interface IRepository
+    public interface IRepository : IDisposable
     {
-        IUsers Users { get; }
-        IRoles Roles { get; }
+        IEnumerable<Role> GetRoles();
+        bool IsRoleExist(string roleName);
+        Role GetRole(int userId);
+        IEnumerable<User> GetUsers(string roleName);
+
+        User LoginUser(User user, bool createUserIfNotExists);
+
     }
 }

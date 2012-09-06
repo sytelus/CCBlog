@@ -1,21 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Security;
+using CommonUtils;
 
 namespace CCBlog.Models
 {
     public class AppRoleProvider : RoleProvider
     {
+        /*
+         * Here userName is int converted to string
+         */
+        public static int ToUserID(string username)
+        {
+            return int.Parse(username, CultureInfo.InvariantCulture);
+        }
+
         public override bool IsUserInRole(string username, string roleName)
         {
-            throw new NotImplementedException();
+            using (var repo = Repository.Factory.Get())
+            {
+                return repo.GetRole(ToUserID(username)).IfNotNull(r => r.Name) == roleName;
+            }
         }
 
         public override string[] GetRolesForUser(string username)
         {
-            throw new NotImplementedException();
+            using (var repo = Repository.Factory.Get())
+            {
+                return repo.GetRole(ToUserID(username)).IfNotNull(r => new string[] {r.Name}, new string[] {});
+            }
         }
 
         public override void CreateRole(string roleName)
@@ -30,7 +46,10 @@ namespace CCBlog.Models
 
         public override bool RoleExists(string roleName)
         {
-            throw new NotImplementedException();
+            using (var repo = Repository.Factory.Get())
+            {
+                return repo.GetRoles().Any(r => r.Name == roleName);
+            }
         }
 
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
@@ -45,12 +64,21 @@ namespace CCBlog.Models
 
         public override string[] GetUsersInRole(string roleName)
         {
-            throw new NotImplementedException();
+            using (var repo = Repository.Factory.Get())
+            {
+                return repo.GetUsers(roleName)
+                    .IfNotNull(users => users.Select(u => u.UserId.ToStringInvariant())
+                                                .ToArray()
+                              , new string[] {});
+            }
         }
 
         public override string[] GetAllRoles()
         {
-            throw new NotImplementedException();
+            using (var repo = Repository.Factory.Get())
+            {
+                return repo.GetRoles().Select(r => r.Name).ToArray();
+            }
         }
 
         public override string[] FindUsersInRole(string roleName, string usernameToMatch)

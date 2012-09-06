@@ -10,15 +10,23 @@ namespace CCBlog.Models
 {
     public class User
     {
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
+        [MaxLength(1024)]
+        [Required]
         public string ClaimedIdentifier { get; set; }
+        [MaxLength(1024)]
         public string FullName { get; set; }
+        [MaxLength(1024)]
         public string Email { get; set; }
-        public DateTimeOffset? LastLoginDate { get; set; }
-        public ICollection<Role> Roles { get; set; }
+        [MaxLength(1024)]
+        public string Nickname { get; set; }
 
-        public string Comment { get; set; }
-        public DateTimeOffset? CreateDate { get; set; }
-        public DateTimeOffset? ModifiedDate { get; set; }
+        public int? RoleId { get; set; }
+        public virtual Role Role { get; set; }
+
+        internal string GetfriendlyName()
+        {
+            return this.FullName ?? this.Nickname ?? this.Email ?? this.ClaimedIdentifier ?? string.Empty;
+        }
     }
 }

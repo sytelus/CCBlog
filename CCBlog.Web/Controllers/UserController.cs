@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-
+using CCBlog.Models;
 using DotNetOpenAuth.OpenId.RelyingParty;
 using System.Web.Security;
 using DotNetOpenAuth.OpenId;
@@ -15,7 +15,7 @@ using System.Web.Configuration;
 
 namespace CCBlog.Controllers
 {
-    public partial class UserController : Controller
+    public partial class UserController : AppControllerBase
     {
         [HttpGet]
         public ActionResult Index()
@@ -105,7 +105,14 @@ namespace CCBlog.Controllers
                 switch (response.Status)
                 {
                     case AuthenticationStatus.Authenticated:
-                        return SetAuthCookieAndRedirect(response, model.ReturnUrl);
+                        var loggedUser = GetLoggedUser(response);
+                        if (loggedUser == null || loggedUser.UserId == 0)
+                        {
+                            model.ErrorMessage = "Signin was successful but this user was not found in system";
+                            break;
+                        }
+
+                        return SetAuthCookieAndRedirect(loggedUser, model.ReturnUrl);
                     case AuthenticationStatus.Canceled:
                         model.ErrorMessage = "Login was cancelled at the provider";
                         break;
@@ -127,26 +134,33 @@ namespace CCBlog.Controllers
             return View("Login", model);
         }
 
-
-        private ActionResult SetAuthCookieAndRedirect(IAuthenticationResponse authResponse, string returnUrl)
+        private User GetLoggedUser(IAuthenticationResponse authResponse)
         {
-            FormsAuthentication.SetAuthCookie(authResponse.ClaimedIdentifier, false);
-            //var user = Membership.GetUser(true);    //Update user's online status
+            var sregResponse = authResponse.GetExtension<ClaimsResponse>();
+            var fullName = sregResponse.IfNotNull(r => r.FullName.AsNullIfEmpty());
+            var nickName = sregResponse.IfNotNull(r => r.Nickname.AsNullIfEmpty());
+            var email = sregResponse.IfNotNull(r => r.Email.AsNullIfEmpty());
 
-            //var sregResponse = authResponse.GetExtension<ClaimsResponse>();
-            //string fullName = sregResponse.IfNotNull(r => r.FullName);
-            //string nickName = sregResponse.IfNotNull(r => r.Nickname);
-            //string email = sregResponse.IfNotNull(r => r.Email);
-            //string friendlyName = fullName ?? nickName ?? email ?? authResponse.ClaimedIdentifier ?? authResponse.FriendlyIdentifierForDisplay ?? string.Empty;
+            var userToLogin = new User()
+            {
+                ClaimedIdentifier = authResponse.ClaimedIdentifier,
+                Email = email,
+                FullName = fullName,
+                Nickname = nickName
+            };
 
-            //if (string.IsNullOrEmpty(email))
-            //{
-            //    user.Email = email;
-            //    Membership.UpdateUser(user);
-            //}
-            
-            //var friendlyNameCookie = new HttpCookie("FriendlyName", friendlyName) { HttpOnly = true };
-            //Response.Cookies.Add(friendlyNameCookie);
+            var loggedUser = this.Repository.LoginUser(userToLogin, true);
+
+            return loggedUser;
+        }
+
+        private ActionResult SetAuthCookieAndRedirect(User loggedUser, string returnUrl)
+        {
+            FormsAuthentication.SetAuthCookie(loggedUser.ClaimedIdentifier, false);
+
+            var friendlyName = loggedUser.GetfriendlyName();
+            var friendlyNameCookie = new HttpCookie("FriendlyName", friendlyName) { HttpOnly = true };
+            Response.Cookies.Add(friendlyNameCookie);
 
             return Redirect(returnUrl);
         }
