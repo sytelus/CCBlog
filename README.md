@@ -17,6 +17,7 @@ Custom 404s --> use from boilerplate?
 Merge initializr web.config
 Add browser choice instead of just Chrome in Boilerplate
 Use Squishit to compress js/css and cache it
+Clean up CreateDatabase.sql
 
 
 How to Build and Run

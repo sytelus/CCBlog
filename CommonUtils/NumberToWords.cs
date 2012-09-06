@@ -1,10 +1,4 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="NumberToEnglish.cs" company="Microsoft">
-// TODO: Update copyright text.
-// </copyright>
-// -----------------------------------------------------------------------
-
-namespace CommonUtils
+﻿namespace CommonUtils
 {
     using System;
     using System.Collections.Generic;
