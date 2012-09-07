@@ -12,5 +12,10 @@ namespace CCBlog.Models
         public int RoleId { get; set; }
         public string Name { get; set; }
         public virtual ICollection<User> Users { get; set; }
+
+        public bool IsAdmin()
+        {
+            return this.Name == "Administrator";
+        }
     }
 }

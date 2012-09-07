@@ -26,7 +26,11 @@ namespace CCBlog.Models
 
         internal string GetfriendlyName()
         {
-            return this.FullName ?? this.Nickname ?? this.Email ?? this.ClaimedIdentifier ?? string.Empty;
+            var friendlyName = this.FullName ?? this.Nickname ?? this.Email ?? this.ClaimedIdentifier ?? string.Empty;
+            if (this.Role != null && this.Role.IsAdmin())
+                friendlyName += " [Admin]";
+
+            return friendlyName;
         }
     }
 }
