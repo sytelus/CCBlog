@@ -1435,6 +1435,15 @@ namespace CommonUtils
             return tempNext;
         }
 
+        public static TValue GetValueOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+        {
+            TValue existingValue;
+            if (dictionary.TryGetValue(key, out existingValue))
+                return existingValue;
+            else
+                return defaultValue;
+        }
+
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
         {
             TValue existingValue;

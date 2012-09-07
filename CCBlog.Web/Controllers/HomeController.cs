@@ -7,7 +7,7 @@ using CommonUtils;
 
 namespace CCBlog.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : AppControllerBase
     {
         [HttpGet]
         public ViewResult Index()
