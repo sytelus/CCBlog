@@ -15,6 +15,7 @@ namespace CCBlog.Repository.EntityRepository
                                   {
                                       Name = "Administrator"
                                   });
-        } 
+        } 
+
     }
 }

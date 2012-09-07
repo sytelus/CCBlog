@@ -135,6 +135,8 @@
     </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\AppRoleProvider.cs" />
+    <Compile Include="Models\BlogPost.cs" />
+    <Compile Include="Models\BlogPostTag.cs" />
     <Compile Include="Repository\EntityRepository\AppDatabaseCreateIfNotExists.cs" />
     <Compile Include="Repository\EntityRepository\MainDbContext.cs" />
     <Compile Include="Repository\EntityRepository\Repository.cs" />
