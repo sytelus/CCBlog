@@ -6,9 +6,9 @@ using System.Web;
 
 namespace CCBlog.Models
 {
-    public class BlogPostTag
+    public class PostTag
     {
-        public int BlogPostTagId { get; set; }
+        public int PostTagId { get; set; }
         [MaxLength(4000)]
         public string Name { get; set; }
         [MaxLength(4000)]
@@ -19,6 +19,6 @@ namespace CCBlog.Models
         public bool IsMenu { get; set; }
         public int? MenuOrder { get; set; }
 
-        public virtual BlogPost BlogPosts { get; set; }
+        public virtual Post Posts { get; set; }
     }
 }
