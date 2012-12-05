@@ -2,7 +2,8 @@
 @using CommonUtils
 @if(Request.IsAuthenticated) 
 {
-    <strong>@Html.Safe(Request.Cookies["FriendlyName"].IfNotNull(c => c.Value, "(NA)"))</strong> <text>|</text> @Html.ActionLink("Sign Out", "Logout", "User", new { ReturnUrl = Request.Url }, null)
+    <strong>@Html.Safe(Request.Cookies["FriendlyName"].IfNotNull(c => c.Value, "(NA)"))</strong> 
+    <text>|</text> @Html.ActionLink("Sign Out", "Logout", "User", new { ReturnUrl = Request.Url }, null)
 }
 else
 {

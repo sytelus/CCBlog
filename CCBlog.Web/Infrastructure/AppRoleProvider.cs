@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using System.Web.Security;
 using CommonUtils;
 
-namespace CCBlog.Models
+namespace CCBlog.Infrastructure
 {
     public class AppRoleProvider : RoleProvider
     {

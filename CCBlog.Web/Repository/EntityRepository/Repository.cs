@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using CCBlog.Models;
+using CommonUtils;
 
 namespace CCBlog.Repository.EntityRepository
 {
@@ -94,6 +94,55 @@ namespace CCBlog.Repository.EntityRepository
                 }
                 else return null;
             }
+        }
+
+        public IEnumerable<PostTag> GetTags()
+        {
+            return dbContext.PostTags;
+        }
+
+        public void SaveTags(IEnumerable<PostTag> postTags)
+        {
+            foreach (var postTag in postTags)
+                dbContext.PostTags.Add(postTag);
+
+            dbContext.SaveChanges();
+        }
+
+        public void AddPost(Post post)
+        {
+            dbContext.Posts.Add(post);
+            AttachExistingTags(post);
+            dbContext.SaveChanges();
+        }
+
+        private void AttachExistingTags(Post post)
+        {
+            if (post.Tags != null && post.Tags.Count > 0)
+            {
+                foreach (var tag in post.Tags)
+                {
+                    if (tag.PostTagId != 0)
+                        dbContext.AttachAsModified(tag, false);
+                }
+            }
+        }
+
+        public void UpdatePost(Post post)
+        {
+            if (dbContext.IsDetached(post))
+                throw new ArgumentException("Post '{0}' cannot be updated because it is not being tracked by database context".FormatEx(post.PostId));
+            // don't know if we should allow this
+            // dbContext.AttachAsModified(post, true);
+            
+            AttachExistingTags(post);
+
+            dbContext.SaveChanges();
+        }
+
+        public Post GetPost(int postId)
+        {
+            return dbContext.Posts.Find(postId);
         }
 
         #endregion

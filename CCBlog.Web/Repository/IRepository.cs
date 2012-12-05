@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CCBlog.Models;
 
 namespace CCBlog.Repository
 {
@@ -10,8 +9,13 @@ namespace CCBlog.Repository
         bool IsRoleExist(string roleName);
         Role GetRole(int userId);
         IEnumerable<User> GetUsers(string roleName);
-
         User LoginUser(User user, bool createUserIfNotExists);
 
+        IEnumerable<PostTag> GetTags();
+        void SaveTags(IEnumerable<PostTag> postTags);
+
+        void AddPost(Post post);
+        void UpdatePost(Post post);
+        Post GetPost(int postId);
     }
 }

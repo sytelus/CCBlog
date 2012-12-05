@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
-using CCBlog.Models;
 
 namespace CCBlog.Repository.EntityRepository
 {
@@ -11,10 +10,8 @@ namespace CCBlog.Repository.EntityRepository
     {
         protected override void Seed(MainDbContext context)
         {
-            context.Roles.Add(new Role()
-                                  {
-                                      Name = "Administrator"
-                                  });
+            context.Roles.Add(new Role() { Name = "Administrator" });
+            context.Roles.Add(new Role() { Name = "Author" });
         } 
 
     }

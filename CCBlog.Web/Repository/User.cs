@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Web.Security;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace CCBlog.Models
+namespace CCBlog.Repository
 {
     public class User
     {
@@ -20,7 +14,7 @@ namespace CCBlog.Models
         public string Email { get; set; }
         [MaxLength(1024)]
         public string Nickname { get; set; }
-
+        public bool IsPostAuthor { get; set; }
         public int? RoleId { get; set; }
         public virtual Role Role { get; set; }
 

@@ -514,7 +514,10 @@ namespace CommonUtils
         public static readonly char[] SpaceDelimiter = new char[] { ' ' };
         public static readonly char[] TildaDelimiter = new char[] { '~' };
         public static readonly char[] DotDelimiter = new char[] { '.' };
+        public static readonly char[] SemiColonDelimiter = new char[] { ';' };
+        public static readonly char[] ColonDelimiter = new char[] { ':' };
         public static readonly string CommaDelimiterString = ",";
+        public static readonly string SemiColonDelimiterString = ";";
 
         public static uint IncrementCountInDictionary<TKey>(this IDictionary<TKey, uint> dictionary, TKey key) 
         {
@@ -1444,18 +1447,33 @@ namespace CommonUtils
                 return defaultValue;
         }
 
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> getDefaultValue)
         {
             TValue existingValue;
             if (dictionary.TryGetValue(key, out existingValue))
                 return existingValue;
             else
-                return defaultValue;
+                return getDefaultValue != null ? getDefaultValue() : default(TValue);
+        }
+
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue)
+        {
+            return GetValueOrDefault(dictionary, key, () => defaultValue);
         }
 
         public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
-            return GetValueOrDefault(dictionary, key, default(TValue));
+            return GetValueOrDefault(dictionary, key, () => default(TValue));
+        }
+
+        /// <summary>
+        /// Creates a URL friendly slug from a string
+        /// </summary>
+        public static string ToUrlFriendlyValue(this string value)
+        {
+            // Repalce everything other than alphanum and _
+            var cleanedValue = Regex.Replace(value, @"[\W]+", "-", RegexOptions.Compiled);
+            return cleanedValue.ToLowerInvariant();
         }
 
         public static int ToInt(this bool booleanValue)

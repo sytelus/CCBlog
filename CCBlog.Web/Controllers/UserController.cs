@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using CCBlog.Models;
+using CCBlog.Repository;
 using DotNetOpenAuth.OpenId.RelyingParty;
 using System.Web.Security;
 using DotNetOpenAuth.OpenId;
@@ -156,7 +156,7 @@ namespace CCBlog.Controllers
 
         private ActionResult SetAuthCookieAndRedirect(User loggedUser, string returnUrl)
         {
-            FormsAuthentication.SetAuthCookie(loggedUser.ClaimedIdentifier, false);
+            FormsAuthentication.SetAuthCookie(loggedUser.UserId.ToStringInvariant(), false);
 
             var friendlyName = loggedUser.GetfriendlyName();
             var friendlyNameCookie = new HttpCookie("FriendlyName", friendlyName) { HttpOnly = true };

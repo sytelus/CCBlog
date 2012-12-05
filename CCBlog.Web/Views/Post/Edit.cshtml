@@ -1,0 +1,80 @@
+﻿@model CCBlog.Controllers.PostController.PostModel
+
+@{
+    var isNewPost = Model.PostId == 0;
+    ViewBag.Title = isNewPost ? "Add New Post" : "Edit Post - " + Model.Title;
+    var Heading = isNewPost ? "Add New Post" : "Edit Post";
+}
+
+@section HeadContent {
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/css/anytime.c.css")" />
+}
+
+
+<h2>@Heading</h2>
+
+@using (Html.BeginForm()) {
+    @Html.AntiForgeryToken()
+        
+    @Html.HiddenFor(m => m.PostId)
+
+    @Html.ValidationSummary(true)
+
+
+    <div>
+        @Html.LabelFor(model => model.Title)
+    </div>
+    <div>
+        @Html.EditorFor(model => model.Title)
+        @Html.ValidationMessageFor(model => model.Title)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.Content)
+    </div>
+    <div>
+        @Html.EditorFor(model => model.Content)
+        @Html.ValidationMessageFor(model => model.Content)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.AuthorCreateDate)
+    </div>
+    <div>
+        @Html.EditorFor(model => model.AuthorCreateDate)
+        @Html.ValidationMessageFor(model => model.AuthorCreateDate)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.AuthorModifyDate)
+    </div>
+    <div>
+        @Html.EditorFor(model => model.AuthorModifyDate)
+        @Html.ValidationMessageFor(model => model.AuthorModifyDate)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.PostTagIdsDelimited)
+    </div>
+    <div>
+        @Html.EditorFor(model => model.PostTagIdsDelimited)
+        @Html.ValidationMessageFor(model => model.PostTagIdsDelimited)
+    </div>
+
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+}
+
+<div>
+    @Html.ActionLink("Home", "Index")
+</div>
+
+@section ScriptContent {
+    <script src="@Url.Content("~/js/vendor/anytime.c.js")"></script>
+    
+    <script>
+        $("#AuthorCreateDate").AnyTime_picker({ format: "%Y-%m-%d %H:%i:%s %E %#", formatUtcOffset: "%: (%@@)", hideInput: true, placement: "inline" });
+        $("#AuthorModifyDate").AnyTime_picker({ format: "%Y-%m-%d %H:%i:%s %E %#", formatUtcOffset: "%: (%@@)", hideInput: true, placement: "inline" });
+    </script>
+}

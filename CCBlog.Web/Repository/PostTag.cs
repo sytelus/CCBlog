@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
-namespace CCBlog.Models
+namespace CCBlog.Repository
 {
     public class PostTag
     {
@@ -14,11 +11,11 @@ namespace CCBlog.Models
         [MaxLength(4000)]
         public string Title { get; set; }
         [MaxLength(4000)]
-        public string HoverOverHint { get; set; }
+        public string HelpHint { get; set; }
         public bool IsVisible { get; set; }
         public bool IsMenu { get; set; }
         public int? MenuOrder { get; set; }
 
-        public virtual Post Posts { get; set; }
+        public virtual ICollection<Post> Posts { get; set; }
     }
 }
