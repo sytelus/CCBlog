@@ -14,6 +14,7 @@ namespace CCBlog.Repository.EntityRepository
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Tag> Tags { get; set; }
         public DbSet<PostTag> PostTags { get; set; }
 
         public void AttachAsModified<T>(T entity, bool markAllPropertiesDirty, params string[] modifiedPropertyNames) where T:class

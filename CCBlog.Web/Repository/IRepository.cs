@@ -3,19 +3,21 @@ using System.Collections.Generic;
 
 namespace CCBlog.Repository
 {
+    public enum EntityChangeType
+    {
+        New,
+        Updated,
+        Deleted
+    }
+
     public interface IRepository : IDisposable
     {
-        IEnumerable<Role> GetRoles();
-        bool IsRoleExist(string roleName);
-        Role GetRole(int userId);
-        IEnumerable<User> GetUsers(string roleName);
-        User LoginUser(User user, bool createUserIfNotExists);
+        //Read operations
+        IEnumerable<T> GetEntities<T>();
 
-        IEnumerable<PostTag> GetTags();
-        void SaveTags(IEnumerable<PostTag> postTags);
-
-        void AddPost(Post post);
-        void UpdatePost(Post post);
-        Post GetPost(int postId);
+        //Write operations
+        void RecordEntityChange<T>(T changedEntity, EntityChangeType changeType);
+        void RecordEntityChange<T>(T changedEntity, EntityChangeType changeType, string[] updatedPropertyNames);
+        void SaveEntityChanges();
     }
 }

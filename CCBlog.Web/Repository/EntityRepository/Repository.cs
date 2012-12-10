@@ -96,15 +96,15 @@ namespace CCBlog.Repository.EntityRepository
             }
         }
 
-        public IEnumerable<PostTag> GetTags()
+        public IEnumerable<Tag> GetTags()
         {
-            return dbContext.PostTags;
+            return dbContext.Tags;
         }
 
-        public void SaveTags(IEnumerable<PostTag> postTags)
+        public void SaveTags(IEnumerable<Tag> tags)
         {
-            foreach (var postTag in postTags)
-                dbContext.PostTags.Add(postTag);
+            foreach (var tag in tags)
+                dbContext.Tags.Add(tag);
 
             dbContext.SaveChanges();
         }

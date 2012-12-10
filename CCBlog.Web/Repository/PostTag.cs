@@ -1,21 +1,19 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
 namespace CCBlog.Repository
 {
     public class PostTag
     {
-        public int PostTagId { get; set; }
-        [MaxLength(4000)]
-        public string Name { get; set; }
-        [MaxLength(4000)]
-        public string Title { get; set; }
-        [MaxLength(4000)]
-        public string HelpHint { get; set; }
-        public bool IsVisible { get; set; }
-        public bool IsMenu { get; set; }
-        public int? MenuOrder { get; set; }
+        [Key, Column(Order = 0)]
+        public int PostId { get; set; }
+        [Key, Column(Order = 1)]
+        public int TagId { get; set; }
 
-        public virtual ICollection<Post> Posts { get; set; }
+        //Navigation properties exists only because they are required by entity framework, do not use it in code
+        public virtual Post Post { get; set; }
+        public virtual Tag Tag { get; set; }
     }
 }

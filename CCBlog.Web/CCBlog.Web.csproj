@@ -138,9 +138,16 @@
     <Compile Include="Infrastructure\AppCache.cs" />
     <Compile Include="Infrastructure\AppRoleProvider.cs" />
     <Compile Include="Infrastructure\AppUtils.cs" />
+    <Compile Include="Infrastructure\EntityCache%273.cs" />
+    <Compile Include="Infrastructure\EntityCache%272.cs" />
+    <Compile Include="ModelBehaviour\Post.cs" />
+    <Compile Include="ModelBehaviour\PostTag.cs" />
+    <Compile Include="ModelBehaviour\Role.cs" />
+    <Compile Include="ModelBehaviour\Tag.cs" />
+    <Compile Include="ModelBehaviour\User.cs" />
     <Compile Include="Repository\Post.cs" />
     <Compile Include="Repository\PostTag.cs" />
-    <Compile Include="Infrastructure\PostTagCache.cs" />
+    <Compile Include="Repository\Tag.cs" />
     <Compile Include="Repository\EntityRepository\AppDatabaseCreateIfNotExists.cs" />
     <Compile Include="Repository\EntityRepository\MainDbContext.cs" />
     <Compile Include="Repository\EntityRepository\Repository.cs" />
