@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using CCBlog.Infrastructure;
+using CCBlog.Model.Poco;
 using CCBlog.Repository;
 using CommonUtils;
 
@@ -13,68 +14,70 @@ namespace CCBlog.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            return this.View();
         }
 
         [Authorize(Roles = "Author")]
         [HttpGet]
         public ActionResult Add()
         {
-            var postModel = new PostModel();
+            var postEditModel = new PostEditModel()
+                {
+                    AllTags = AppCache.Tags.ToArray(), 
+                    Post = new Post(), 
+                    OriginalPostSerialized = null
+                };
 
-            return View("Edit", postModel);
+            return View("Edit", postEditModel);
         }
 
         [Authorize(Roles = "Author")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Add(PostModel postModel)
+        public ActionResult Add(PostEditModel postEditModel)
         {
             if (!ModelState.IsValid)
-                return View("Edit", postModel);
+                return View("Edit", postEditModel);
 
-            var post = Post.Create(postModel.Title, postModel.Content, postModel.PostTagIdsDelimited, AppUtils.GetCurrentUserId(true)
-                                   , postModel.AuthorCreateDate, postModel.AuthorModifyDate, AppCache.PostTagCache);
+            this.Repository.AddPost(postEditModel.Post);
 
-            this.Repository.AddPost(post);
-
-            return RedirectToAction("Index", new {Id = post.PostId});
+            return RedirectToAction("Index", new { Id = postEditModel.Post.PostId });
         }
 
         [Authorize(Roles = "Author")]
         [HttpGet]
         public ActionResult Edit(int postId)
         {
-            var post = this.Repository.GetPost(postId);
+            var post = this.Repository.GetPost(postId, true);
 
             if (post == null)
                 return HttpNotFound("Post ID '{0}' was not found".FormatEx(postId));
 
-            var postModel = new PostModel(post);
+            var postPoco = (Post) post;
 
-            return View(postModel);
+            var postEditModel = new PostEditModel()
+                {
+                    AllTags = AppCache.Tags.ToArray(),
+                    Post = postPoco,
+                    OriginalPostSerialized = WebUtils.Utils.ToJson(postPoco)
+                };
+
+            return View(postEditModel);
         }
 
         [Authorize(Roles = "Author")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(PostModel postModel)
+        public ActionResult Edit(PostEditModel postEditModel)
         {
             if (!ModelState.IsValid)
-                return View("Edit", postModel);
+                return View("Edit", postEditModel);
 
-            var post = this.Repository.GetPost(postModel.PostId);
+            var originalPostPoco = WebUtils.Utils.FromJson<Post>(postEditModel.OriginalPostSerialized);
 
-            if (post == null)
-                return HttpNotFound("Post ID '{0}' was not found".FormatEx(postModel.PostId));
+            this.Repository.UpdatePost(originalPostPoco, postEditModel.Post);
 
-            post.Update(postModel.Title, postModel.Content, postModel.PostTagIdsDelimited,
-                        AppUtils.GetCurrentUserId(true), postModel.AuthorCreateDate, postModel.AuthorModifyDate,
-                        AppCache.PostTagCache);
-
-            this.Repository.UpdatePost(post);
-
-            return RedirectToAction("Index", new { Id = post.PostId });
+            return RedirectToAction("Index", new { Id = postEditModel.Post.PostId });
         }
     }
 }

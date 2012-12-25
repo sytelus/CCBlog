@@ -1,0 +1,39 @@
+<#@ include file="PetaPoco.Core.ttinclude" #>
+<#
+	// Settings
+    ConnectionStringName = "CCBlogDbContext";			// Uses last connection string in config if not specified
+    Namespace = "CCBlog.Model.Poco";
+    RepoName = "CCBlogDbContext";
+    GenerateOperations = false;
+	GeneratePocos = true;
+	GenerateCommon = true;
+	ClassPrefix = "";
+	ClassSuffix = "";
+	TrackModifiedColumns = false;
+
+    // Read schema
+	var tables = LoadTables();
+
+	tables["Status"].Ignore = true;
+	tables["Post"]["StatusId"].PropertyName = "Status";
+	tables["Series"]["StatusId"].PropertyName = "Status";
+	tables["Post"]["StatusId"].PropertyType = "CCBlog.Model.Contracts.EntityStatus";
+	tables["Series"]["StatusId"].PropertyType = "CCBlog.Model.Contracts.EntityStatus";
+
+
+/*
+	// Tweak Schema
+	tables["tablename"].Ignore = true;							// To ignore a table
+	tables["tablename"].ClassName = "newname";					// To change the class name of a table
+	tables["tablename"]["columnname"].Ignore = true;			// To ignore a column
+	tables["tablename"]["columnname"].PropertyName="newname";	// To change the property name of a column
+	tables["tablename"]["columnname"].PropertyType="bool";		// To change the property type of a column
+*/
+
+	// Generate output
+	if (tables.Count>0)
+	{
+#>
+<#@ include file="PetaPoco.Generator.ttinclude" #>
+<# } #>
+

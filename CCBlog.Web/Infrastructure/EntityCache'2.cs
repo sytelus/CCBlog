@@ -7,43 +7,50 @@ using System.Web;
 
 namespace CCBlog.Infrastructure
 {
-    public class EntityCache<TKey, TEntity> : IEnumerable<KeyValuePair<TKey, TEntity>> where TEntity:class 
+    public class EntityCache<TKey, TEntity> : IEnumerable<TEntity> where TEntity:class 
     {
-        private Lazy<Dictionary<TKey, TEntity>> cachedEntities = null;
-        private readonly Func<TEntity, TKey> keyGenerator;
-        public EntityCache(Func<TEntity, TKey> keyGenerator)
+        private Lazy<Dictionary<TKey, TEntity>> entityIndex = null;
+        private Lazy<TEntity[]> toArray = null;
+        private readonly Func<TEntity, TKey> getKey;
+        private readonly Func<IEnumerable<TEntity>> getEntities = null;
+        public EntityCache(Func<IEnumerable<TEntity>> getEntities, Func<TEntity, TKey> getKey)
         {
-            this.keyGenerator = keyGenerator;
-            Refresh();
+            this.getKey = getKey;
+            this.getEntities = getEntities;
         }
 
         public virtual void Refresh()
         {
-            this.cachedEntities = new Lazy<Dictionary<TKey, TEntity>>(this.GetEntities, LazyThreadSafetyMode.ExecutionAndPublication);
+            this.entityIndex = new Lazy<Dictionary<TKey, TEntity>>(this.GetEntityIndex, LazyThreadSafetyMode.ExecutionAndPublication);
+            this.toArray = new Lazy<TEntity[]>(() => this.EntityIndex.Value.Values.ToArray(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        protected Lazy<Dictionary<TKey, TEntity>> CachedEntities
+        protected Lazy<Dictionary<TKey, TEntity>> EntityIndex
         {
-            get { return this.cachedEntities; }
-        }
-
-        private Dictionary<TKey, TEntity> GetEntities()
-        {
-            using (var repository = Repository.Factory.Get())
+            get
             {
-                return repository.GetEntities<TEntity>().ToDictionary(e => this.keyGenerator(e), e => e);
+                if (this.entityIndex == null)
+                    this.Refresh();
+
+                return this.entityIndex;
             }
+        }
+
+        private Dictionary<TKey, TEntity> GetEntityIndex()
+        {
+            var entities = getEntities();
+            return entities.ToDictionary(e => getKey(e), e => e);
         }
 
         public TEntity this[TKey key, bool refreshIfNotFound = true]
         {
             get
             {
-                var entity = this.cachedEntities.Value[key];
+                var entity = this.EntityIndex.Value[key];
                 if (entity == null && refreshIfNotFound)
                 {
                     Refresh();
-                    entity = this.cachedEntities.Value[key];
+                    entity = this.EntityIndex.Value[key];
 
                     if (entity == null)
                         throw new ArgumentOutOfRangeException("key", string.Format("Entity not found for the specified key {0}", key.ToString()));
@@ -55,12 +62,20 @@ namespace CCBlog.Infrastructure
 
         public int Count
         {
-            get { return this.cachedEntities.Value.Count; }
+            get { return this.EntityIndex.Value.Count; }
         }
 
-        public IEnumerator<KeyValuePair<TKey, TEntity>> GetEnumerator()
+        public TEntity[] ToArray()
         {
-            return this.cachedEntities.Value.GetEnumerator();
+            if (this.toArray == null)   
+                this.Refresh();
+
+            return toArray.Value;
+        }
+
+        public IEnumerator<TEntity> GetEnumerator()
+        {
+            return this.EntityIndex.Value.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

@@ -1,4 +1,5 @@
-﻿using Microsoft.Security.Application;
+﻿using System.Web.Script.Serialization;
+using Microsoft.Security.Application;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,18 @@ namespace WebUtils
         public static IHtmlString Blank(this HtmlHelper htmlHelper)
         {
             return MvcHtmlString.Empty;
+        }
+
+        public static T FromJson<T>(string input)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            return serializer.Deserialize<T>(input);
+        }
+
+        public static string ToJson(object input)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            return serializer.Serialize(input);
         }
     }
 }

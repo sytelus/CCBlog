@@ -11,32 +11,44 @@ namespace CCBlog.Infrastructure
         where TAlternativeKey : class 
         where TEntity:class 
     {
-        private readonly Func<TEntity, TAlternativeKey> alternateKeyGenerator;
-        private Lazy<Dictionary<TAlternativeKey, TEntity>> cachedEntities = null;
-        public EntityCache(Func<TEntity, TKey> keyGenerator, Func<TEntity, TAlternativeKey> alternateKeyGenerator)
-            : base(keyGenerator)
+        private readonly Func<TEntity, TAlternativeKey> getAlternateKey;
+        private Lazy<Dictionary<TAlternativeKey, TEntity>> alternateIndex = null;
+
+        public EntityCache(Func<IEnumerable<TEntity>> getEntities, Func<TEntity, TKey> getKey, Func<TEntity, TAlternativeKey> getAlternateKey)
+            : base(getEntities, getKey)
         {
-            this.alternateKeyGenerator = alternateKeyGenerator;
+            this.getAlternateKey = getAlternateKey;
         }
 
         public override void Refresh()
         {
             base.Refresh();
-            cachedEntities = new Lazy<Dictionary<TAlternativeKey, TEntity>>(this.GetEntitiesByAlternateKey, LazyThreadSafetyMode.ExecutionAndPublication);
+            alternateIndex = new Lazy<Dictionary<TAlternativeKey, TEntity>>(this.GetAlternateEntityIndex, LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        public Dictionary<TAlternativeKey, TEntity> GetEntitiesByAlternateKey()
+        private Dictionary<TAlternativeKey, TEntity> GetAlternateEntityIndex()
         {
-            return base.CachedEntities.Value.Values.ToDictionary(e => this.alternateKeyGenerator(e), e => e);
+            return base.EntityIndex.Value.Values.ToDictionary(e => this.getAlternateKey(e), e => e);
+        }
+
+        protected Lazy<Dictionary<TAlternativeKey, TEntity>> AlternateIndex
+        {
+            get
+            {
+                if (this.alternateIndex == null)
+                    this.Refresh();
+
+                return alternateIndex;
+            }
         }
 
         public TEntity GetByAlternateKey(TAlternativeKey alternateKey, bool refreshIfNotFound = true)
         {
-            var entity = this.cachedEntities.Value[alternateKey];
+            var entity = this.AlternateIndex.Value[alternateKey];
             if (entity == null && refreshIfNotFound)
             {
                 Refresh();
-                entity = this.cachedEntities.Value[alternateKey];
+                entity = this.AlternateIndex.Value[alternateKey];
 
                 if (entity == null)
                     throw new ArgumentOutOfRangeException("alternateKey", string.Format("Entity not found for the specified alternateKey {0}", alternateKey.ToString()));

@@ -16,7 +16,7 @@ namespace CCBlog.Controllers
             get
             {
                 if (this.repository == null)
-                    this.repository = Factory.Get();
+                    this.repository = RepositoryFactory.Get();
 
                 return this.repository;
             }

@@ -54,9 +54,6 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.0.12182\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -140,22 +137,34 @@
     <Compile Include="Infrastructure\AppUtils.cs" />
     <Compile Include="Infrastructure\EntityCache%273.cs" />
     <Compile Include="Infrastructure\EntityCache%272.cs" />
-    <Compile Include="ModelBehaviour\Post.cs" />
-    <Compile Include="ModelBehaviour\PostTag.cs" />
-    <Compile Include="ModelBehaviour\Role.cs" />
-    <Compile Include="ModelBehaviour\Tag.cs" />
-    <Compile Include="ModelBehaviour\User.cs" />
-    <Compile Include="Repository\Post.cs" />
-    <Compile Include="Repository\PostTag.cs" />
-    <Compile Include="Repository\Tag.cs" />
-    <Compile Include="Repository\EntityRepository\AppDatabaseCreateIfNotExists.cs" />
-    <Compile Include="Repository\EntityRepository\MainDbContext.cs" />
-    <Compile Include="Repository\EntityRepository\Repository.cs" />
-    <Compile Include="Repository\Factory.cs" />
+    <Compile Include="Infrastructure\EntityCountsCache.cs" />
+    <Compile Include="Infrastructure\KeyValueCache.cs" />
+    <Compile Include="Model\Contracts\IEntityPage.cs" />
+    <Compile Include="Model\Contracts\IPost.cs" />
+    <Compile Include="Model\Contracts\IRole.cs" />
+    <Compile Include="Model\Contracts\ISeries.cs" />
+    <Compile Include="Model\Contracts\ITag.cs" />
+    <Compile Include="Model\Contracts\IUser.cs" />
+    <Compile Include="Model\Poco\EntityPage.cs" />
+    <Compile Include="Model\Poco\Post.cs" />
+    <Compile Include="Model\Poco\Role.cs" />
+    <Compile Include="Model\Poco\Series.cs" />
+    <Compile Include="Model\Poco\Tag.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\PetaPocoSqlServer\POCO Generation Templates\Database.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Database.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Repository\PetaPocoSqlServer\Repository.cs" />
+    <Compile Include="Repository\RepositoryFactory.cs" />
     <Compile Include="Repository\IRepository.cs" />
-    <Compile Include="Repository\Role.cs" />
-    <Compile Include="Repository\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Model\Poco\User.cs" />
     <Compile Include="SiteConfig.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +186,8 @@
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\main.css" />
+    <None Include="Database\Scripts TSql\InsertDefaultMetaData.sql" />
+    <None Include="Database\Scripts TSql\CreateDatabase.sql" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
     <Content Include="js\jQueryOpenIdPlugin\images\aolW.png" />
@@ -201,6 +212,16 @@
     <Content Include="js\jQueryOpenIdPlugin\openid.css" />
     <Content Include="Global.asax" />
     <None Include="humans.txt" />
+    <Content Include="Repository\PetaPocoSqlServer\POCO Generation Templates\Database.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Database.cs</LastGenOutput>
+    </Content>
+    <Content Include="Repository\PetaPocoSqlServer\POCO Generation Templates\PetaPoco.Core.ttinclude" />
+    <Content Include="Repository\PetaPocoSqlServer\POCO Generation Templates\PetaPoco.Generator.ttinclude" />
+    <Content Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </Content>
     <None Include="robots.txt" />
     <Content Include="js\jQueryOpenIdPlugin\jquery.openid.js" />
     <Content Include="js\main.js" />
@@ -224,6 +245,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Database\Empty TSql\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -241,6 +263,10 @@
       <Project>{1EC368A3-A0C7-4EA6-A5C4-506AD090F84C}</Project>
       <Name>CommonUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PetaPoco\PetaPoco.csproj">
+      <Project>{33699753-151d-4100-8f12-9ae1aeb5c5bd}</Project>
+      <Name>PetaPoco</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WebUtils\WebUtils.csproj">
       <Project>{99a08b01-acd1-43be-a7b5-0571659cbd31}</Project>
       <Name>WebUtils</Name>
@@ -253,6 +279,9 @@
     <None Include="..\README.md">
       <Link>README.md</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

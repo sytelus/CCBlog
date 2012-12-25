@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Web;
 using System.Web.Mvc;
+using CCBlog.Model.Contracts;
+using CCBlog.Model.Poco;
 using CCBlog.Repository;
 using DotNetOpenAuth.OpenId.RelyingParty;
 using System.Web.Security;
@@ -134,7 +137,7 @@ namespace CCBlog.Controllers
             return View("Login", model);
         }
 
-        private User GetLoggedUser(IAuthenticationResponse authResponse)
+        private IUser GetLoggedUser(IAuthenticationResponse authResponse)
         {
             var sregResponse = authResponse.GetExtension<ClaimsResponse>();
             var fullName = sregResponse.IfNotNull(r => r.FullName.AsNullIfEmpty());
@@ -149,12 +152,12 @@ namespace CCBlog.Controllers
                 Nickname = nickName
             };
 
-            var loggedUser = this.Repository.LoginUser(userToLogin, true);
+            var loggedUser = LoginUser(userToLogin, false); //setting to true could result in lots of users creating their logins unnecessorily
 
             return loggedUser;
         }
 
-        private ActionResult SetAuthCookieAndRedirect(User loggedUser, string returnUrl)
+        private ActionResult SetAuthCookieAndRedirect(IUser loggedUser, string returnUrl)
         {
             FormsAuthentication.SetAuthCookie(loggedUser.UserId.ToStringInvariant(), false);
 
@@ -174,6 +177,50 @@ namespace CCBlog.Controllers
         private string GetDefaultReturnUrl()
         {
             return Url.Action("Index", "Home", Request.Url.Scheme);
+        }
+
+        private IUser LoginUser(IUser user, bool createUserIfNotExists)
+        {
+            if (string.IsNullOrEmpty(user.ClaimedIdentifier))
+                throw new ArgumentNullException("user.ClaimedIdentifier", "user.ClaimedIdentifier must be valid");
+
+            //Find this user
+            var foundUser = this.Repository.GetUser(user.ClaimedIdentifier);
+            if (foundUser != null)
+            {
+                var updated = false;
+
+                //Check if we have latest info
+                if (!string.IsNullOrEmpty(user.FullName))
+                {
+                    foundUser.FullName = user.FullName;
+                    updated = true;
+                }
+
+                if (!string.IsNullOrEmpty(user.Email))
+                {
+                    foundUser.Email = user.Email;
+                    updated = true;
+                }
+
+                if (updated)
+                    this.Repository.UpdateUser(foundUser);
+
+                return foundUser;
+            }
+            else
+            {
+                if (createUserIfNotExists)
+                {
+                    if (user.UserId != 0)
+                        throw new ArgumentOutOfRangeException("user.UserId must be 0 if new user needs to be created");
+
+                    this.Repository.AddUser(user);
+
+                    return user;
+                }
+                else return null;
+            }
         }
 
     }

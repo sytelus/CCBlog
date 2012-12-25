@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using CCBlog.Model.Contracts;
+using CCBlog.Model.Poco;
 using CCBlog.Repository;
 
 namespace CCBlog.Controllers
@@ -12,34 +14,11 @@ namespace CCBlog.Controllers
         /// <summary>
         /// View model for Post
         /// </summary>
-        public class PostModel
+        public class PostEditModel
         {
-            public PostModel()
-            {
-                this.AuthorCreateDate = DateTimeOffset.UtcNow;
-                this.AuthorModifyDate = this.AuthorCreateDate;
-            }
-
-            public PostModel(Post post)
-            {
-                this.PostId = post.PostId;
-                this.Title = post.Title;
-                this.Content = post.Content;
-                this.AuthorCreateDate = post.AuthorCreateDate;
-                this.AuthorModifyDate = post.AuthorModifyDate;
-                this.PostTagIdsDelimited = post.PostTagIdsDelimited;
-            }
-
-            public int PostId { get; set; }
-            [MaxLength(4000)]
-            [Required]
-            public string Title { get; set; }
-            public string Content { get; set; }
-            [Required]
-            public DateTimeOffset AuthorCreateDate { get; set; }
-            [Required]
-            public DateTimeOffset AuthorModifyDate { get; set; }
-            public string PostTagIdsDelimited { get; set; }
+            public ITag[] AllTags { get; set; }
+            public Post Post { get; set; }
+            public string OriginalPostSerialized { get; set; }
         }
 	}
 }

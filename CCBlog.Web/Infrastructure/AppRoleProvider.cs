@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Web.Security;
+using CCBlog.Model.Contracts;
 using CommonUtils;
 
 namespace CCBlog.Infrastructure
@@ -11,25 +12,50 @@ namespace CCBlog.Infrastructure
         /*
          * Here userName is int converted to string
          */
-        public static int ToUserID(string username)
+        private static int ToUserId(string username)
         {
             return int.Parse(username, CultureInfo.InvariantCulture);
         }
 
+        private IRole GetRoleForUser(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return null;
+
+            var userId = ToUserId(userName);
+
+            var user = AppCache.AuthorsAndAdmins[userId, false];
+
+            if (user == null)
+            {
+                using (var repo = Repository.RepositoryFactory.Get())
+                    user = repo.GetUser(userId);
+            }
+
+            if (user == null)
+                return null;
+            else
+                return user.Role;
+        }
+
         public override bool IsUserInRole(string username, string roleName)
         {
-            using (var repo = Repository.Factory.Get())
-            {
-                return repo.GetRole(ToUserID(username)).IfNotNull(r => r.Name) == roleName;
-            }
+            var role = GetRoleForUser(username);
+
+            if (role == null)
+                return false;
+            else
+                return role.Name == roleName;
         }
 
         public override string[] GetRolesForUser(string username)
         {
-            using (var repo = Repository.Factory.Get())
-            {
-                return repo.GetRole(ToUserID(username)).IfNotNull(r => new string[] {r.Name}, new string[] {});
-            }
+            var role = GetRoleForUser(username);
+
+            if (role == null)
+                return new string[]{};
+            else
+                return new string[] {role.Name};
         }
 
         public override void CreateRole(string roleName)
@@ -44,7 +70,7 @@ namespace CCBlog.Infrastructure
 
         public override bool RoleExists(string roleName)
         {
-            using (var repo = Repository.Factory.Get())
+            using (var repo = Repository.RepositoryFactory.Get())
             {
                 return repo.GetRoles().Any(r => r.Name == roleName);
             }
@@ -62,18 +88,17 @@ namespace CCBlog.Infrastructure
 
         public override string[] GetUsersInRole(string roleName)
         {
-            using (var repo = Repository.Factory.Get())
+            using (var repo = Repository.RepositoryFactory.Get())
             {
-                return repo.GetUsers(roleName)
-                    .IfNotNull(users => users.Select(u => u.UserId.ToStringInvariant())
-                                                .ToArray()
-                              , new string[] {});
+                return repo.GetUsersInRoles(new int[] {AppCache.Roles.GetByAlternateKey(roleName).RoleId})
+                    .Select(u => u.UserId.ToString())
+                    .ToArray();
             }
         }
 
         public override string[] GetAllRoles()
         {
-            using (var repo = Repository.Factory.Get())
+            using (var repo = Repository.RepositoryFactory.Get())
             {
                 return repo.GetRoles().Select(r => r.Name).ToArray();
             }

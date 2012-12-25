@@ -1,8 +1,8 @@
-﻿@model CCBlog.Controllers.PostController.PostModel
+﻿@model CCBlog.Controllers.PostController.PostEditModel
 
 @{
-    var isNewPost = Model.PostId == 0;
-    ViewBag.Title = isNewPost ? "Add New Post" : "Edit Post - " + Model.Title;
+    var isNewPost = Model.Post.PostId == 0;
+    ViewBag.Title = isNewPost ? "Add New Post" : "Edit Post - " + Model.Post.Title;
     var Heading = isNewPost ? "Add New Post" : "Edit Post";
 }
 
@@ -16,49 +16,42 @@
 @using (Html.BeginForm()) {
     @Html.AntiForgeryToken()
         
-    @Html.HiddenFor(m => m.PostId)
+    @Html.HiddenFor(model => model.Post.PostId)
+    @Html.HiddenFor(model => model.OriginalPostSerialized)
 
     @Html.ValidationSummary(true)
 
 
     <div>
-        @Html.LabelFor(model => model.Title)
+        @Html.LabelFor(model => model.Post.Title)
     </div>
     <div>
-        @Html.EditorFor(model => model.Title)
-        @Html.ValidationMessageFor(model => model.Title)
-    </div>
-
-    <div>
-        @Html.LabelFor(model => model.Content)
-    </div>
-    <div>
-        @Html.EditorFor(model => model.Content)
-        @Html.ValidationMessageFor(model => model.Content)
+        @Html.EditorFor(model => model.Post.Title)
+        @Html.ValidationMessageFor(model => model.Post.Title)
     </div>
 
     <div>
-        @Html.LabelFor(model => model.AuthorCreateDate)
+        @Html.LabelFor(model => model.Post.Body)
     </div>
     <div>
-        @Html.EditorFor(model => model.AuthorCreateDate)
-        @Html.ValidationMessageFor(model => model.AuthorCreateDate)
-    </div>
-
-    <div>
-        @Html.LabelFor(model => model.AuthorModifyDate)
-    </div>
-    <div>
-        @Html.EditorFor(model => model.AuthorModifyDate)
-        @Html.ValidationMessageFor(model => model.AuthorModifyDate)
+        @Html.EditorFor(model => model.Post.Body)
+        @Html.ValidationMessageFor(model => model.Post.Body)
     </div>
 
     <div>
-        @Html.LabelFor(model => model.PostTagIdsDelimited)
+        @Html.LabelFor(model => model.Post.AuthorCreateDate)
     </div>
     <div>
-        @Html.EditorFor(model => model.PostTagIdsDelimited)
-        @Html.ValidationMessageFor(model => model.PostTagIdsDelimited)
+        @Html.EditorFor(model => model.Post.AuthorCreateDate)
+        @Html.ValidationMessageFor(model => model.Post.AuthorCreateDate)
+    </div>
+
+    <div>
+        @Html.LabelFor(model => model.Post.AuthorModifyDate)
+    </div>
+    <div>
+        @Html.EditorFor(model => model.Post.AuthorModifyDate)
+        @Html.ValidationMessageFor(model => model.Post.AuthorModifyDate)
     </div>
 
         <p>
