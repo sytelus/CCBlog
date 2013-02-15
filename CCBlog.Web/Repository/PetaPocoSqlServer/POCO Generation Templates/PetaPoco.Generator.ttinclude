@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 using PetaPoco;
 
 namespace <#=Namespace #>
@@ -181,6 +182,12 @@ foreach(Column col in from c in tbl.Columns where !c.Ignore select c)
 		<#=col.PropertyType #><#=CheckNullable(col)#> _<#=col.PropertyName #>;
 
 <# } else { #>
+<# if (!col.IsNullable) { #>
+		[Required] 
+<# } #>
+<# if (!string.IsNullOrEmpty(col.MaxLength)) { #>
+		[MaxLength(<#=col.MaxLength#>)]
+<# } #>
 <# if (col.Name!=col.PropertyName) { #>
 		[Column("<#=col.Name#>")] public <#=col.PropertyType #><#=CheckNullable(col)#> <#=col.PropertyName #> { get; set; }
 <# } else { #>

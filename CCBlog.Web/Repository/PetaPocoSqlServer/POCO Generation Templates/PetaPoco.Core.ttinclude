@@ -133,6 +133,7 @@ public class Column
     public string PropertyType;
     public bool IsPK;
     public bool IsNullable;
+	public string MaxLength;
 	public bool IsAutoIncrement;
 	public bool Ignore;
 }
@@ -549,6 +550,7 @@ class SqlServerSchemaReader : SchemaReader
 					col.PropertyName=CleanUp(col.Name);
 					col.PropertyType=GetPropertyType(rdr["DataType"].ToString());
 					col.IsNullable=rdr["IsNullable"].ToString()=="YES";
+					col.MaxLength=rdr["MaxLength"].ToString();
 					col.IsAutoIncrement=((int)rdr["IsIdentity"])==1;
 					result.Add(col);
 				}
@@ -745,6 +747,7 @@ class SqlServerCeSchemaReader : SchemaReader
 					col.PropertyName=CleanUp(col.Name);
 					col.PropertyType=GetPropertyType(rdr["DataType"].ToString());
 					col.IsNullable=rdr["IsNullable"].ToString()=="YES";
+					col.MaxLength=rdr["MaxLength"].ToString();
 					col.IsAutoIncrement=rdr["AUTOINC_INCREMENT"]!=DBNull.Value;
 					result.Add(col);
 				}
@@ -931,6 +934,7 @@ class PostGreSqlSchemaReader : SchemaReader
 					col.PropertyName=CleanUp(col.Name);
 					col.PropertyType=GetPropertyType(rdr["udt_name"].ToString());
 					col.IsNullable=rdr["is_nullable"].ToString()=="YES";
+					col.MaxLength=rdr["CHARACTER_MAXIMUM_LENGTH"].ToString();
 					col.IsAutoIncrement = rdr["column_default"].ToString().StartsWith("nextval(");
 					result.Add(col);
 				}
@@ -1023,7 +1027,7 @@ class PostGreSqlSchemaReader : SchemaReader
 			";
 
 	const string COLUMN_SQL=@"
-			SELECT column_name, is_nullable, udt_name, column_default
+			SELECT column_name, is_nullable, udt_name, column_default, character_maximum_length
 			FROM information_schema.columns 
 			WHERE table_name=@tableName;
 			";
@@ -1079,6 +1083,7 @@ class MySqlSchemaReader : SchemaReader
                 col.PropertyType=GetPropertyType(row);
                 col.IsNullable=row["IS_NULLABLE"].ToString()=="YES";
                 col.IsPK=row["COLUMN_KEY"].ToString()=="PRI";
+				col.MaxLength=row["CHARACTER_MAXIMUM_LENGTH"].ToString();
 				col.IsAutoIncrement=row["extra"].ToString().ToLower().IndexOf("auto_increment")>=0;
 
                 item.Columns.Add(col);
@@ -1231,6 +1236,7 @@ class OracleSchemaReader : SchemaReader
 					col.PropertyName=CleanUp(col.Name);
 					col.PropertyType=GetPropertyType(rdr["DataType"].ToString(), (rdr["DataType"] == DBNull.Value ? null : rdr["DataType"].ToString()));
 					col.IsNullable=rdr["IsNullable"].ToString()=="YES";
+					col.MaxLength=rdr["MaxLength"].ToString();
 					col.IsAutoIncrement=true;
 					result.Add(col);
 				}
@@ -1334,7 +1340,8 @@ from USER_VIEWS";
  column_name ColumnName, 
  data_type DataType, 
  data_scale DataScale,
- nullable IsNullable
+ nullable IsNullable,
+ char_length MaxLength
  from USER_TAB_COLS utc 
  where table_name = :tableName
  order by column_id";

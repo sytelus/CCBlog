@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 using PetaPoco;
 
 namespace CCBlog.Model.Poco
@@ -108,9 +109,19 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+		[MaxLength(128)]
+
+
 		[Column] public string name { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -120,7 +131,13 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int diagram_id { get; set; }
+
+
 
 
 
@@ -132,7 +149,78 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(-1)]
+
+
 		[Column] public byte[] definition { get; set; }
+
+
+
+	}
+
+
+	[TableName("[CCBlog].[Series]")]
+
+
+
+	[PrimaryKey("SeriesId")]
+
+
+
+	[ExplicitColumns]
+    public partial class Series  
+    {
+
+
+
+		[Required] 
+
+
+
+		[Column] public int SeriesId { get; set; }
+
+
+
+
+
+		[Required] 
+
+
+		[MaxLength(255)]
+
+
+		[Column] public string Name { get; set; }
+
+
+
+
+
+
+		[MaxLength(4000)]
+
+
+		[Column] public string Title { get; set; }
+
+
+
+
+
+
+		[MaxLength(-1)]
+
+
+		[Column] public string Abstract { get; set; }
+
+
+
+
+
+		[Required] 
+
+
+
+		[Column("StatusId")] public CCBlog.Model.Contracts.EntityStatus Status { get; set; }
 
 
 
@@ -153,10 +241,20 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int RoleId { get; set; }
 
 
 
+
+
+		[Required] 
+
+
+		[MaxLength(255)]
 
 
 		[Column] public string Name { get; set; }
@@ -180,10 +278,20 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int TagId { get; set; }
 
 
 
+
+
+		[Required] 
+
+
+		[MaxLength(255)]
 
 
 		[Column] public string Name { get; set; }
@@ -192,15 +300,27 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(4000)]
+
+
 		[Column] public string Title { get; set; }
 
 
 
 
 
+
+		[MaxLength(4000)]
+
+
 		[Column] public string HelpText { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -210,7 +330,13 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public bool IsNavigation { get; set; }
+
+
 
 
 
@@ -235,58 +361,21 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int PostId { get; set; }
 
 
 
 
 
+		[Required] 
+
+
+
 		[Column] public int TagId { get; set; }
-
-
-
-	}
-
-
-	[TableName("[CCBlog].[Series]")]
-
-
-
-	[PrimaryKey("SeriesId")]
-
-
-
-	[ExplicitColumns]
-    public partial class Series  
-    {
-
-
-
-		[Column] public int SeriesId { get; set; }
-
-
-
-
-
-		[Column] public string Name { get; set; }
-
-
-
-
-
-		[Column] public string Title { get; set; }
-
-
-
-
-
-		[Column] public string Abstract { get; set; }
-
-
-
-
-
-		[Column("StatusId")] public CCBlog.Model.Contracts.EntityStatus Status { get; set; }
 
 
 
@@ -307,10 +396,20 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int PostId { get; set; }
 
 
 
+
+
+		[Required] 
+
+
+		[MaxLength(128)]
 
 
 		[Column] public string UrlFriendlyName { get; set; }
@@ -319,10 +418,18 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(4000)]
+
+
 		[Column] public string Title { get; set; }
 
 
 
+
+
+
+		[MaxLength(4000)]
 
 
 		[Column] public string Abstract { get; set; }
@@ -331,9 +438,17 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(-1)]
+
+
 		[Column] public string Body { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -343,9 +458,17 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public DateTimeOffset ModifyDate { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -355,9 +478,17 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public DateTimeOffset AuthorModifyDate { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -367,9 +498,17 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int ModifiedByUserId { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -379,7 +518,13 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(4000)]
+
+
 		[Column] public string TagIdCsv { get; set; }
+
+
 
 
 
@@ -391,7 +536,11 @@ namespace CCBlog.Model.Poco
 
 
 
+
+
 		[Column] public int? SeriesPart { get; set; }
+
+
 
 
 
@@ -403,9 +552,17 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(255)]
+
+
 		[Column] public string PageLayoutName { get; set; }
 
 
+
+
+
+		[Required] 
 
 
 
@@ -430,10 +587,20 @@ namespace CCBlog.Model.Poco
 
 
 
+		[Required] 
+
+
+
 		[Column] public int UserId { get; set; }
 
 
 
+
+
+		[Required] 
+
+
+		[MaxLength(1024)]
 
 
 		[Column] public string ClaimedIdentifier { get; set; }
@@ -442,10 +609,18 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(1024)]
+
+
 		[Column] public string FullName { get; set; }
 
 
 
+
+
+
+		[MaxLength(1024)]
 
 
 		[Column] public string Email { get; set; }
@@ -454,13 +629,13 @@ namespace CCBlog.Model.Poco
 
 
 
+
+		[MaxLength(1024)]
+
+
 		[Column] public string Nickname { get; set; }
 
 
-
-
-
-		[Column] public bool IsAuthor { get; set; }
 
 
 
